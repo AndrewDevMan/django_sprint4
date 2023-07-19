@@ -7,14 +7,14 @@ from .models import Post
 def get_queryset_all_post():
     '''All posts'''
     queryset = Post.objects.select_related(
-                'category',
-                'location',
-                'author',
-            ).order_by(
-                '-pub_date',
-            ).annotate(
-                comment_count=Count('comments'),
-            )
+        'category',
+        'location',
+        'author',
+    ).order_by(
+        '-pub_date',
+    ).annotate(
+        comment_count=Count('comments'),
+    )
     return queryset
 
 
