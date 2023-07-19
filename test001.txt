@@ -1,0 +1,199 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.6, pytest-7.1.3, pluggy-1.0.0 -- /home/andrew/Dev/django_sprint4/venv/bin/python3
+django: settings: blogicum.settings (from ini)
+rootdir: /home/andrew/Dev/django_sprint4, configfile: pytest.ini
+plugins: django-4.5.2, Faker-12.0.1
+collecting ... collected 4 items
+
+tests/test_post.py::test_post_created_at PASSED                          [ 25%]
+tests/test_post.py::test_post FAILED                                     [ 50%]
+tests/test_post.py::TestPostModelAttrs::test_model_attrs[`image` field] <- tests/conftest.py PASSED [ 75%]
+tests/test_post.py::TestPostModelAttrs::test_model_attrs[`pub_date` field] <- tests/conftest.py PASSED [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_post ___________________________________
+
+published_category = <Category: Miss Baby Seven Firm Federal Generation>
+published_location = <Location: Mrs. Madeline Ferguson DVM>
+user_client = <django.test.client.Client object at 0x7f7504cba7d0>
+another_user_client = <django.test.client.Client object at 0x7f7504cb8d30>
+unlogged_client = <django.test.client.Client object at 0x7f7504cb8b20>
+comment_to_a_post = <Comment: Skill ground reach window race whole. Contain view news better mind remain job.>
+create_post_context_form_item = KeyVal(key='form', val=<PostForm bound=False, valid=False, fields=(title;text;pub_date;image;location;category)>)
+PostModel = <class 'blog.models.Post'>
+CommentModelAdapter = <class 'adapters.comment.CommentModelAdapter.<locals>._CommentModelAdapter'>
+main_content_tester = <test_content.MainPostContentTester object at 0x7f7504a15840>
+
+    @pytest.mark.django_db(transaction=True)
+    def test_post(
+            published_category: Model,
+            published_location: Model,
+            user_client: django.test.Client,
+            another_user_client: django.test.Client,
+            unlogged_client: django.test.Client,
+            comment_to_a_post: Model,
+            create_post_context_form_item: Tuple[str, BaseForm],
+            PostModel: Type[Model],
+            CommentModelAdapter: CommentModelAdapterT,
+            main_content_tester: MainPostContentTester
+    ):
+        _, ctx_form = create_post_context_form_item
+    
+        create_a_post_get_response = get_create_a_post_get_response_safely(
+            user_client
+        )
+    
+        response_on_created, created_items = _test_create_items(
+            PostModel,
+            PostModelAdapter,
+            another_user_client,
+            create_a_post_get_response,
+            ctx_form,
+            published_category,
+            published_location,
+            unlogged_client,
+            user_client,
+        )
+    
+        # checking images are visible on post creation
+        created_content = response_on_created.content.decode('utf-8')
+        img_count = created_content.count('<img')
+        expected_img_count = main_content_tester.n_or_page_size(len(created_items))
+        assert img_count >= expected_img_count, (
+            'Убедитесь, что при создании публикации она отображается с картинкой.'
+        )
+    
+>       edit_response, edit_url, del_url = _test_edit_post(
+            CommentModelAdapter,
+            another_user_client,
+            comment_to_a_post,
+            unlogged_client=unlogged_client,
+            user_client=user_client,
+        )
+
+tests/test_post.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_post.py:356: in _test_edit_post
+    edit_response = _test_edit(
+tests/test_edit.py:54: in _test_edit
+    return tester.test_edit_item(
+tests/form/post/edit_form_tester.py:118: in test_edit_item
+    return super().test_edit_item(updated_form, qs, item_adapter)
+tests/form/base_form_tester.py:355: in test_edit_item
+    can_edit, _ = self.user_can_edit(
+tests/form/base_form_tester.py:412: in user_can_edit
+    response = submitter.test_submit(
+tests/form/base_form_tester.py:433: in test_submit
+    response = self.client.post(url, data=data, follow=True)
+venv/lib/python3.10/site-packages/django/test/client.py:751: in post
+    response = super().post(path, data=data, content_type=content_type, secure=secure, **extra)
+venv/lib/python3.10/site-packages/django/test/client.py:407: in post
+    return self.generic('POST', path, post_data, content_type,
+venv/lib/python3.10/site-packages/django/test/client.py:473: in generic
+    return self.request(**r)
+venv/lib/python3.10/site-packages/django/test/client.py:719: in request
+    self.check_exception(response)
+venv/lib/python3.10/site-packages/django/test/client.py:580: in check_exception
+    raise exc_value
+venv/lib/python3.10/site-packages/django/core/handlers/exception.py:47: in inner
+    response = get_response(request)
+venv/lib/python3.10/site-packages/django/core/handlers/base.py:181: in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+venv/lib/python3.10/site-packages/django/views/generic/base.py:70: in view
+    return self.dispatch(request, *args, **kwargs)
+blogicum/blog/views.py:52: in dispatch
+    return redirect('blog:post_detail',
+venv/lib/python3.10/site-packages/django/shortcuts.py:41: in redirect
+    return redirect_class(resolve_url(to, *args, **kwargs))
+venv/lib/python3.10/site-packages/django/shortcuts.py:130: in resolve_url
+    return reverse(to, args=args, kwargs=kwargs)
+venv/lib/python3.10/site-packages/django/urls/base.py:86: in reverse
+    return resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <URLResolver <module 'blog.urls' from '/home/andrew/Dev/django_sprint4/blogicum/blog/urls.py'> (blog:blog) ''>
+lookup_view = 'post_detail', _prefix = '/', args = ()
+kwargs = {'kwargs': {'pk': 2}}
+possibilities = [([('posts/%(pk)s/', ['pk'])], 'posts/(?P<pk>[0-9]+)/\\Z', {}, {'pk': <django.urls.converters.IntConverter object at 0x7f7505ff2770>})]
+possibility = [('posts/%(pk)s/', ['pk'])], pattern = 'posts/(?P<pk>[0-9]+)/\\Z'
+defaults = {}
+converters = {'pk': <django.urls.converters.IntConverter object at 0x7f7505ff2770>}
+result = 'posts/%(pk)s/', params = ['pk']
+
+    def _reverse_with_prefix(self, lookup_view, _prefix, *args, **kwargs):
+        if args and kwargs:
+            raise ValueError("Don't mix *args and **kwargs in call to reverse()!")
+    
+        if not self._populated:
+            self._populate()
+    
+        possibilities = self.reverse_dict.getlist(lookup_view)
+    
+        for possibility, pattern, defaults, converters in possibilities:
+            for result, params in possibility:
+                if args:
+                    if len(args) != len(params):
+                        continue
+                    candidate_subs = dict(zip(params, args))
+                else:
+                    if set(kwargs).symmetric_difference(params).difference(defaults):
+                        continue
+                    if any(kwargs.get(k, v) != v for k, v in defaults.items()):
+                        continue
+                    candidate_subs = kwargs
+                # Convert the candidate subs to text using Converter.to_url().
+                text_candidate_subs = {}
+                match = True
+                for k, v in candidate_subs.items():
+                    if k in converters:
+                        try:
+                            text_candidate_subs[k] = converters[k].to_url(v)
+                        except ValueError:
+                            match = False
+                            break
+                    else:
+                        text_candidate_subs[k] = str(v)
+                if not match:
+                    continue
+                # WSGI provides decoded URLs, without %xx escapes, and the URL
+                # resolver operates on such URLs. First substitute arguments
+                # without quoting to build a decoded URL and look for a match.
+                # Then, if we have a match, redo the substitution with quoted
+                # arguments in order to return a properly encoded URL.
+                candidate_pat = _prefix.replace('%', '%%') + result
+                if re.search('^%s%s' % (re.escape(_prefix), pattern), candidate_pat % text_candidate_subs):
+                    # safe characters from `pchar` definition of RFC 3986
+                    url = quote(candidate_pat % text_candidate_subs, safe=RFC3986_SUBDELIMS + '/~:@')
+                    # Don't allow construction of scheme relative urls.
+                    return escape_leading_slashes(url)
+        # lookup_view can be URL name or callable, but callables are not
+        # friendly in error messages.
+        m = getattr(lookup_view, '__module__', None)
+        n = getattr(lookup_view, '__name__', None)
+        if m is not None and n is not None:
+            lookup_view_s = "%s.%s" % (m, n)
+        else:
+            lookup_view_s = lookup_view
+    
+        patterns = [pattern for (_, pattern, _, _) in possibilities]
+        if patterns:
+            if args:
+                arg_msg = "arguments '%s'" % (args,)
+            elif kwargs:
+                arg_msg = "keyword arguments '%s'" % kwargs
+            else:
+                arg_msg = "no arguments"
+            msg = (
+                "Reverse for '%s' with %s not found. %d pattern(s) tried: %s" %
+                (lookup_view_s, arg_msg, len(patterns), patterns)
+            )
+        else:
+            msg = (
+                "Reverse for '%(view)s' not found. '%(view)s' is not "
+                "a valid view function or pattern name." % {'view': lookup_view_s}
+            )
+>       raise NoReverseMatch(msg)
+E       django.urls.exceptions.NoReverseMatch: Reverse for 'post_detail' with keyword arguments '{'kwargs': {'pk': 2}}' not found. 1 pattern(s) tried: ['posts/(?P<pk>[0-9]+)/\\Z']
+
+venv/lib/python3.10/site-packages/django/urls/resolvers.py:698: NoReverseMatch
+========================= 1 failed, 3 passed in 1.53s ==========================
