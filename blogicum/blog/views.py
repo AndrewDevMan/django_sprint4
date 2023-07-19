@@ -89,7 +89,7 @@ class CategoryPostsListView(PostListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(
-                category__slug=self.kwargs.get('category_slug'),
+            category__slug=self.kwargs.get('category_slug'),
         )
 
     def get_context_data(self, **kwargs):
