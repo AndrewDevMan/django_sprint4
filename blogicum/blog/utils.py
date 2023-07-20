@@ -1,7 +1,6 @@
+from blog.models import Post
 from django.db.models import Count
 from django.utils import timezone
-
-from .models import Post
 
 
 def get_queryset_all_post():

@@ -1,10 +1,17 @@
+from blog.models import Comment, Post, User
 from django import forms
-
-from .models import Comment, Post, User
+from django.utils import timezone
 
 
 class PostForm(forms.ModelForm):
     '''Form for posts'''
+    pub_date = forms.DateTimeField(
+        initial=timezone.now(),
+        label='Дата и время публикации',
+        help_text=('Если установить дату и время в будущем — '
+                   'можно делать отложенные публикации.'),
+    )
+
     class Meta:
         model = Post
         exclude = ('author', 'is_published',)

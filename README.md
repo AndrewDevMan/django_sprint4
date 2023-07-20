@@ -20,8 +20,7 @@
         pip install -U pip
         pip install -r requirements.txt
     4. Запустите сервер на локальной машине и наслаждайтесь!
-        cd blogicum/
-        python manage.py runserver
+        python3 blogicum/manage.py runserver
         сайт доступен по адресу: 127.0.0.1:8000
 
 ## Об авторе

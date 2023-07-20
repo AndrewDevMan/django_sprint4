@@ -2,7 +2,16 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
+from blogicum.settings import LIMIT_CHARS
+
 User = get_user_model()
+
+
+class DefaultVerboseNameMadel(models.Model):
+    '''Set related name'''
+    class Meta:
+        abstract = True
+        default_related_name = '%(class)ss'
 
 
 class PublishedModel(models.Model):
@@ -78,13 +87,12 @@ class Post(TitleModel):
     image = models.ImageField(
         verbose_name='Фото',
         upload_to='posts_images',
-        blank=True
+        blank=True,
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор публикации',
-        related_name='posts'
     )
     location = models.ForeignKey(
         Location,
@@ -92,17 +100,15 @@ class Post(TitleModel):
         null=True,
         blank=True,
         verbose_name='Местоположение',
-        related_name='posts'
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Категория',
-        related_name='posts'
     )
 
-    class Meta:
+    class Meta(DefaultVerboseNameMadel.Meta):
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
         ordering = ('-pub_date',)
@@ -121,7 +127,6 @@ class Comment(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comments',
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -131,13 +136,13 @@ class Comment(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор комментария',
-        related_name='comments',
     )
 
-    class Meta:
+    class Meta(DefaultVerboseNameMadel.Meta):
         verbose_name = 'коментрий'
         verbose_name_plural = 'Коментрии'
         ordering = ('created_at',)
 
     def __str__(self):
-        return self.text
+        return (f'Коментарий "{self.author}" к посту "{self.post}": '
+                f'"{self.text[:LIMIT_CHARS]}"')

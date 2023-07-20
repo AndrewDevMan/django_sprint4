@@ -1,3 +1,7 @@
+from blog.forms import CommentForm, PostForm, UserForm
+from blog.mixins import CommentMixin, UserIsAuthorMixin
+from blog.models import Category, Comment, Post, User
+from blog.utils import get_queryset_all_post, get_queryset_published_post
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -5,12 +9,7 @@ from django.utils import timezone
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-from .forms import CommentForm, PostForm, UserForm
-from .mixins import CommentMixin, UserIsAuthorMixin
-from .models import Category, Comment, Post, User
-from .utils import get_queryset_all_post, get_queryset_published_post
-
-LIMIT_POST = 10
+from blogicum.settings import LIMIT_POST
 
 
 class PostListView(ListView):
@@ -157,7 +156,7 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.post_id = self.data_post.pk
+        form.instance.post = self.data_post
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -172,4 +171,3 @@ class CommentUpdateView(CommentMixin, UpdateView):
 
 class CommentDeleteView(CommentMixin, DeleteView):
     '''Page for delete comment'''
-    pass

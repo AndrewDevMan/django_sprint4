@@ -1,8 +1,10 @@
+from blog.models import Category, Comment, Location, Post
 from django.contrib import admin
 
-from .models import Category, Comment, Location, Post
+from blogicum.settings import LIMIT_LIST
 
 
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = (
         'title',
@@ -20,9 +22,10 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_published',)
     list_display_links = ('title',)
-    list_per_page = 20
+    list_per_page = LIMIT_LIST
 
 
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
         'title',
@@ -38,9 +41,10 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_filter = ('is_published',)
     list_display_links = ('title',)
-    list_per_page = 10
+    list_per_page = LIMIT_LIST
 
 
+@admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -52,14 +56,9 @@ class LocationAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_filter = ('is_published',)
     list_display_links = ('name',)
-    list_per_page = 20
+    list_per_page = LIMIT_LIST
 
 
+@admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_per_page = 20
-
-
-admin.site.register(Location, LocationAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Post, PostAdmin)
-admin.site.register(Comment, CommentAdmin)
+    list_per_page = LIMIT_LIST
