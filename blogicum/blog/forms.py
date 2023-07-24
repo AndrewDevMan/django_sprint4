@@ -4,25 +4,25 @@ from django.utils import timezone
 
 
 class PostForm(forms.ModelForm):
-    '''Form for posts'''
+    """Form for posts"""
     pub_date = forms.DateTimeField(
         initial=timezone.now(),
         label='Дата и время публикации',
         help_text=('Если установить дату и время в будущем — '
                    'можно делать отложенные публикации.'),
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
     )
 
     class Meta:
         model = Post
         exclude = ('author', 'is_published',)
         widgets = {
-            'pub_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'text': forms.Textarea(attrs={'rows': '5'}),
         }
 
 
 class CommentForm(forms.ModelForm):
-    '''Form for comments'''
+    """Form for comments"""
     class Meta:
         model = Comment
         fields = ('text',)
